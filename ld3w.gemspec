@@ -1,9 +1,11 @@
 Gem::Specification.new do |s|
   s.name = 'ld3w'
-  s.version = '0.1.0'
-  s.summary = 'ld3w'
+  s.version = '0.1.1'
+  s.summary = 'Reads the GPS data from a Nokia LD-3W GPS bluetooth receiver ' + 
+      'using the system command rfcomm.'
   s.authors = ['James Robertson']
-  s.files = Dir['lib/**/*.rb']
+  s.files = Dir['lib/ld3w.rb']
+  s.add_runtime_dependency('nmea_parser', '~> 0.3', '>=0.3.2')
   s.signing_key = '../privatekeys/ld3w.pem'
   s.cert_chain  = ['gem-public_cert.pem']
   s.license = 'MIT'
