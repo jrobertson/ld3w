@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name = 'ld3w'
-  s.version = '0.1.1'
+  s.version = '0.1.2'
   s.summary = 'Reads the GPS data from a Nokia LD-3W GPS bluetooth receiver ' + 
       'using the system command rfcomm.'
   s.authors = ['James Robertson']

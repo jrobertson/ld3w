@@ -5,6 +5,9 @@
 
 require 'nmea_parser'
 
+class Ld3wError < ErrorException
+end
+
 class Ld3w
 
 
@@ -14,21 +17,24 @@ class Ld3w
     @file = '/dev/' + device
     @np = NMEAParser.new
     @affirmations = affirmations
+    @device = device
 
   end
   
   def locate()
 
     line = ''
-
-    t = Time.now
-
-    IO.popen @command do |io|
-
-      while not File.exists? @file
-        sleep 1
-        puts 'waiting ...'
-      end
+    lines = []
+    
+    IO.popen @command, autoclose: true do |io|
+      
+      sleep 2
+      t = Time.now
+      
+      (sleep 1; puts 'waiting ...') until File.exists?(@file) or 
+          Time.now > (t + 10)
+      
+      raise(Ld3wError, 'Cannot open file ' + @file) unless File.exists? @file
 
       # get the data from the file
 
@@ -41,21 +47,22 @@ class Ld3w
         c = x.split(',').count('')
 
         if x =~ pattern and c <= 2 then
-          line = x 
+          lines << x 
           line_count > @affirmations ? break : line_count += 1
         end
+        sleep 0.05
       end
 
       puts 'bye'
-      Process.kill('KILL', io.pid)
+      Process.kill('INT', io.pid)
 
     end
-
-    @np.parse(line)
+    
+    #`rfcomm release #{@device}`
+    @np.parse(lines.last)
     @np
 
 
   end
 
 end
-
