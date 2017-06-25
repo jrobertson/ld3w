@@ -5,7 +5,8 @@
 
 require 'nmea_parser'
 
-class Ld3wError < ErrorException
+
+class Ld3wError < Exception
 end
 
 class Ld3w
@@ -52,15 +53,16 @@ class Ld3w
         end
         sleep 0.05
       end
+      sleep 2
 
       puts 'bye'
       Process.kill('INT', io.pid)
-
+      sleep 2
     end
     
     #`rfcomm release #{@device}`
-    @np.parse(lines.last)
-    @np
+
+    lines.map {|x| @np.parse(x) }
 
 
   end
