@@ -4,15 +4,16 @@
 
 
 require 'nmea_parser'
+require 'c32'
 
 
 class Ld3wError < Exception
 end
 
 class Ld3w
+  using ColouredText
 
-
-  def initialize(device: '', bdaddress: 'rfcomm0', channel: '1', 
+  def initialize(device: 'rfcomm0', bdaddress: '', channel: '1', 
                  affirmations: 5, verbose: true)
 
     @command = "rfcomm connect %s %s %s" % [device, bdaddress, channel]
@@ -36,15 +37,18 @@ class Ld3w
       
       unless File.exists? @file then
         
-        `rfcomm release #{file}`
-        raise(Ld3wError, 'Cannot open file ' + @file) 
+        `rfcomm release #{@file}`
+        msg = 'Cannot open file ' + @file
+        puts msg.error
+        raise(Ld3wError, msg) 
       end
 
       lines = read_file()
 
       puts 'bye'
-      Process.kill('INT', io.pid)
+      Process.kill('INT', io.pid)      
       sleep 2
+
     end
     
     #`rfcomm release #{@device}`
@@ -66,10 +70,11 @@ class Ld3w
       c = x.split(',').count('')
 
       if x =~ pattern and c <= 2 then
-        lines << x 
+        lines << x
+
         line_count > @affirmations ? break : line_count += 1
       end
-      sleep 0.05
+      sleep 0.03
     end
     sleep 2
     
