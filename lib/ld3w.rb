@@ -35,15 +35,13 @@ class Ld3w
       (sleep 1; puts 'waiting ...') until File.exists?(@file) or 
           Time.now > (t + 10)
       
-      unless File.exists? @file then
-        
-        `rfcomm release #{@file}`
+      if File.exists? @file then
+        lines = read_file() 
+      else
         msg = 'Cannot open file ' + @file
         puts msg.error
-        raise(Ld3wError, msg) 
+        #raise(Ld3wError, msg)         
       end
-
-      lines = read_file()
 
       puts 'bye'
       Process.kill('INT', io.pid)      
